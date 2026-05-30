@@ -1,17 +1,18 @@
 <div align="center">
 
-# 🛡️ DB Warden
+![DB Warden Logo](public/logo.svg)
+
+# DB Warden
 
 **The access-control cockpit for your databases.**
 
 Manage users, roles, and privileges across PostgreSQL, MySQL, MongoDB, Redis, and more — all from one desktop app, with zero SQL writing required.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](https://github.com/your-username/db-warden/releases)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](https://github.com/Sujalogy/dbwarden-sujal/releases)
 [![Built with Electron](https://img.shields.io/badge/Built%20with-Electron-47848F?logo=electron)](https://electronjs.org)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev)
 
-![DB Warden Screenshot](public/image-3.png)
 </div>
 
 ---

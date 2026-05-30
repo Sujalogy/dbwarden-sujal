@@ -1,11 +1,9 @@
 import {
   Center, Stack, Title, Text, PasswordInput, Button,
-  Alert, Paper, ThemeIcon, Group, Divider, Progress,
-  Modal, PinInput, Box
+  Alert, Paper, Group, Divider, Progress, Modal
 } from '@mantine/core'
 import {
-  IconDatabase, IconLock, IconAlertCircle, IconShield,
-  IconRefresh, IconDownload, IconUpload
+  IconAlertCircle, IconShield, IconDownload, IconUpload
 } from '@tabler/icons-react'
 import { useDisclosure } from '@mantine/hooks'
 import { useState, useEffect, useCallback } from 'react'
@@ -231,9 +229,13 @@ export default function LoginPage({ mode }: Props) {
       <Stack align="center" gap="xl" w={420} px="md">
         {/* Logo */}
         <Stack align="center" gap="xs">
-          <ThemeIcon size={64} radius="xl" variant="light" color="indigo">
-            {mode === 'locked' ? <IconLock size={32} /> : <IconDatabase size={32} />}
-          </ThemeIcon>
+          <img
+            src="/logo.svg"
+            alt="DB Warden"
+            width={80}
+            height={80}
+            style={{ filter: mode === 'locked' ? 'grayscale(40%) brightness(0.8)' : 'none' }}
+          />
           <Title order={2} ta="center">{titles[mode]}</Title>
           <Text size="sm" c="dimmed" ta="center" maw={360}>{subtitles[mode]}</Text>
         </Stack>
