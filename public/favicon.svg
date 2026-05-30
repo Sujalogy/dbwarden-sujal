@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4338ca"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="cg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Shield -->
+  <path d="M16 2 L28 7 L28 17 C28 24 16 30 16 30 C16 30 4 24 4 17 L4 7 Z"
+    fill="url(#sg)"/>
+
+  <!-- Cylinder top -->
+  <ellipse cx="16" cy="12" rx="7" ry="2.5" fill="#a5b4fc"/>
+  <!-- Cylinder body -->
+  <rect x="9" y="12" width="14" height="9" fill="url(#cg)"/>
+  <!-- Cylinder line -->
+  <ellipse cx="16" cy="17" rx="7" ry="2.5" fill="none" stroke="#c7d2fe" stroke-width="0.8" opacity="0.5"/>
+  <!-- Cylinder bottom -->
+  <ellipse cx="16" cy="21" rx="7" ry="2.5" fill="#4338ca"/>
+
+  <!-- Lock shackle -->
+  <path d="M13 24 L13 22 A3 3 0 0 1 19 22 L19 24"
+    fill="none" stroke="#e0e7ff" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- Lock body -->
+  <rect x="12" y="24" width="8" height="5" rx="1.5" fill="#e0e7ff" opacity="0.9"/>
+</svg>
