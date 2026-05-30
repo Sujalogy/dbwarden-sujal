@@ -13,8 +13,8 @@ interface AppState {
 export const useAppStore = create<AppState>((set) => ({
   connections: [],
   activeConnectionId: null,
-  activeTab: 'users',
+  activeTab: 'overview',
   setConnections: (connections) => set({ connections }),
-  setActiveConnectionId: (id) => set({ activeConnectionId: id, activeTab: 'users' }),
+  setActiveConnectionId: (id) => set({ activeConnectionId: id, activeTab: 'overview' }),
   setActiveTab: (tab) => set({ activeTab: tab }),
 }))

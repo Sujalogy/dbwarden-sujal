@@ -1,11 +1,12 @@
 import { Tabs, Box, Group, Text, Badge, ActionIcon, Tooltip, Stack } from '@mantine/core'
-import { IconUsers, IconShieldLock, IconHierarchy, IconList, IconPlugOff, IconMathFunction } from '@tabler/icons-react'
+import { IconUsers, IconShieldLock, IconHierarchy, IconList, IconPlugOff, IconMathFunction, IconLayoutDashboard } from '@tabler/icons-react'
 import { useAppStore } from '../store/app'
 import UsersTab from '../components/users/UsersTab'
 import PermissionsTab from '../components/permissions/PermissionsTab'
 import FunctionsTab from '../components/permissions/FunctionsTab'
 import RolesTab from '../components/roles/RolesTab'
 import AuditTab from '../components/audit/AuditTab'
+import OverviewTab from '../components/overview/OverviewTab'
 import { api } from '../api'
 import { useQueryClient } from '@tanstack/react-query'
 import { notifications } from '@mantine/notifications'
@@ -57,10 +58,11 @@ export default function DashboardPage() {
       {/* Tabs */}
       <Tabs
         value={activeTab}
-        onChange={(v) => setActiveTab(v ?? 'users')}
+        onChange={(v) => setActiveTab(v ?? 'overview')}
         style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
       >
         <Tabs.List px="md" style={{ background: 'var(--mantine-color-dark-7)', borderBottom: '1px solid var(--mantine-color-dark-4)' }}>
+          <Tabs.Tab value="overview" leftSection={<IconLayoutDashboard size={14} />}>Overview</Tabs.Tab>
           <Tabs.Tab value="users" leftSection={<IconUsers size={14} />}>Users & Roles</Tabs.Tab>
           <Tabs.Tab value="permissions" leftSection={<IconShieldLock size={14} />}>Tables</Tabs.Tab>
           <Tabs.Tab value="functions" leftSection={<IconMathFunction size={14} />}>Functions</Tabs.Tab>
@@ -69,6 +71,9 @@ export default function DashboardPage() {
         </Tabs.List>
 
         <Box style={{ flex: 1, overflow: 'auto' }}>
+          <Tabs.Panel value="overview" style={{ height: '100%' }}>
+            <OverviewTab connectionId={activeConnectionId!} connection={connection} />
+          </Tabs.Panel>
           <Tabs.Panel value="users" style={{ height: '100%' }}>
             <UsersTab connectionId={activeConnectionId!} />
           </Tabs.Panel>

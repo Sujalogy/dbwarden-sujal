@@ -76,7 +76,31 @@ Built for developers, DBAs, and teams who manage cloud databases (AWS RDS, Neon,
 
 ## Screenshots
 
-![Home Page](public/image-2.png)
+### 🔐 Login & Security
+
+| Login | Master Password Setup |
+| ----- | --------------------- |
+| ![Login](docs/screenshots/login.png) | ![Setup](docs/screenshots/setup.png) |
+
+### 🏠 Dashboard & Connections
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+### 👥 Users & Roles
+
+![Users](docs/screenshots/users.png)
+
+### 🔒 Permission Matrix
+
+![Permissions](docs/screenshots/permissions.png)
+
+### 🌐 Role Designer
+
+![Roles](docs/screenshots/roles.png)
+
+### 📋 Audit Log
+
+![Audit](docs/screenshots/audit.png)
 
 ---
 
