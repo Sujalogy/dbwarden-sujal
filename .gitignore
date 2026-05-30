@@ -7,3 +7,6 @@ auth.json
 audit.jsonl
 .env
 .env.*
+.claude*
+.gitignore
+githubhelper.txt

@@ -221,7 +221,10 @@ export default function AuditTab({ connectionId }: Props) {
         <LoadingOverlay visible={isLoading} />
         <ScrollArea h="100%">
           {entries.length === 0 && !isLoading && (
-            <Text c="dimmed" ta="center" size="sm" py="xl">No audit entries yet</Text>
+            <Text c="dimmed" ta="center" size="sm" py="xl">No audit entries yet for this connection.</Text>
+          )}
+          {entries.length > 0 && filteredEntries.length === 0 && !isLoading && (
+            <Text c="dimmed" ta="center" size="sm" py="xl">No entries match your filters. Try clearing them.</Text>
           )}
           <Table highlightOnHover>
             <Table.Thead>

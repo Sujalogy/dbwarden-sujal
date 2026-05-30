@@ -4,23 +4,7 @@ import { useState, useCallback } from 'react'
 import { notifications } from '@mantine/notifications'
 import { IconRefresh, IconCheck } from '@tabler/icons-react'
 import { api } from '../../api'
-
-function generatePassword(len = 20): string {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
-  return Array.from(crypto.getRandomValues(new Uint8Array(len)))
-    .map(b => chars[b % chars.length])
-    .join('')
-}
-
-function strength(pw: string) {
-  let s = 0
-  if (pw.length >= 8) s++
-  if (pw.length >= 14) s++
-  if (/[A-Z]/.test(pw)) s++
-  if (/[0-9]/.test(pw)) s++
-  if (/[^A-Za-z0-9]/.test(pw)) s++
-  return { score: s, label: ['Very weak','Weak','Fair','Good','Strong'][s] ?? 'Strong', color: ['red','orange','yellow','teal','green'][s] ?? 'green' }
-}
+import { generatePassword, getPasswordStrength } from '../../utils/password'
 
 interface Props {
   opened: boolean
@@ -37,7 +21,7 @@ export default function ResetPasswordModal({ opened, onClose, connectionId, prin
   })
 
   const pw = form.values.password
-  const s = strength(pw)
+  const s = getPasswordStrength(pw)
 
   const handleGenerate = useCallback(() => form.setFieldValue('password', generatePassword()), [form])
 

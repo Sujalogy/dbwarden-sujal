@@ -15,6 +15,38 @@ const DEFAULT_PORTS: Record<string, number> = {
   postgres: 5432, mysql: 3306, mongodb: 27017, redis: 6379, sqlite: 0
 }
 
+const ENGINE_FROM_PROTOCOL: Record<string, string> = {
+  postgresql: 'postgres', postgres: 'postgres',
+  mysql: 'mysql', mariadb: 'mysql',
+  mongodb: 'mongodb', 'mongodb+srv': 'mongodb',
+  redis: 'redis', rediss: 'redis',
+}
+
+function parseConnectionUrl(url: string): Partial<{
+  engine: string; host: string; port: number; database: string;
+  username: string; password: string; sslEnabled: boolean
+}> | null {
+  try {
+    const u = new URL(url.trim())
+    const protocol = u.protocol.replace(':', '')
+    const engine = ENGINE_FROM_PROTOCOL[protocol]
+    if (!engine) return null
+    const database = u.pathname.replace(/^\//, '')
+    const sslmode = u.searchParams.get('sslmode')
+    return {
+      engine,
+      host: u.hostname || '',
+      port: u.port ? parseInt(u.port, 10) : DEFAULT_PORTS[engine],
+      database: database || '',
+      username: u.username ? decodeURIComponent(u.username) : '',
+      password: u.password ? decodeURIComponent(u.password) : '',
+      sslEnabled: sslmode !== 'disable',
+    }
+  } catch {
+    return null
+  }
+}
+
 interface Props { opened: boolean; onClose: () => void; connectionToEdit?: StoredConnection }
 
 export default function AddConnectionModal({ opened, onClose, connectionToEdit }: Props) {
@@ -102,6 +134,20 @@ export default function AddConnectionModal({ opened, onClose, connectionToEdit }
     form.setFieldValue('engine', engine)
     form.setFieldValue('port', DEFAULT_PORTS[engine] ?? 5432)
     setTestResult(null)
+  }
+
+  function handleUrlPaste(url: string) {
+    const parsed = parseConnectionUrl(url)
+    if (!parsed) return
+    if (parsed.engine) { form.setFieldValue('engine', parsed.engine); form.setFieldValue('port', parsed.port ?? DEFAULT_PORTS[parsed.engine] ?? 5432) }
+    if (parsed.host) form.setFieldValue('host', parsed.host)
+    if (parsed.port) form.setFieldValue('port', parsed.port)
+    if (parsed.database) form.setFieldValue('database', parsed.database)
+    if (parsed.username) form.setFieldValue('username', parsed.username)
+    if (parsed.password) form.setFieldValue('password', parsed.password)
+    if (parsed.sslEnabled !== undefined) form.setFieldValue('sslEnabled', parsed.sslEnabled)
+    setTestResult(null)
+    notifications.show({ message: 'Connection URL parsed — review and save.', color: 'green' })
   }
 
   function buildPayload() {
@@ -207,6 +253,18 @@ export default function AddConnectionModal({ opened, onClose, connectionToEdit }
           {/* ── Basic ── */}
           <Tabs.Panel value="basic" pt="sm">
             <Stack gap="sm">
+              {/* URL paste shortcut */}
+              <TextInput
+                label="Paste a connection URL (optional)"
+                description="postgresql://user:pass@host:5432/db — auto-fills all fields below"
+                placeholder="postgresql:// or mongodb:// or redis://..."
+                onPaste={(e) => {
+                  const text = e.clipboardData.getData('text')
+                  if (text.includes('://')) { e.preventDefault(); handleUrlPaste(text) }
+                }}
+                onBlur={(e) => { if (e.target.value.includes('://')) handleUrlPaste(e.target.value) }}
+              />
+              <Divider label="or fill manually" labelPosition="center" />
               <Group grow>
                 <TextInput label="Display Name" placeholder="My RDS Instance" required {...form.getInputProps('name')} />
                 <Select

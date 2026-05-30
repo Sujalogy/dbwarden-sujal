@@ -1,5 +1,5 @@
 import { AppShell, Box, Stack, ActionIcon, Tooltip, Center, Loader } from '@mantine/core'
-import { IconMenu2 } from '@tabler/icons-react'
+import { IconMenu2, IconSettings } from '@tabler/icons-react'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { api } from './api'
@@ -9,13 +9,15 @@ import ConnectionSidebar from './components/connections/ConnectionSidebar'
 import DashboardPage from './pages/DashboardPage'
 import WelcomePage from './pages/WelcomePage'
 import LoginPage from './pages/LoginPage'
+import SettingsPage from './pages/SettingsPage'
 import type { AuthStatus } from '../../shared/types'
 
 export default function App() {
   const { activeConnectionId, setConnections } = useAppStore()
   const { mode, setMode } = useAuthStore()
+  const [showSettings, setShowSettings] = useState(false)
 
-  // ── Bootstrap: check auth status on mount ──────────────────────────────────
+  // ── Bootstrap auth on mount ────────────────────────────────────────────────
   useEffect(() => {
     api.auth.check().then((status) => {
       const s = status as AuthStatus
@@ -25,16 +27,17 @@ export default function App() {
     })
   }, [setMode])
 
-  // ── Listen for auto-lock from main process ─────────────────────────────────
+  // ── Listen for auto-lock event ─────────────────────────────────────────────
   useEffect(() => {
     const unlisten = api.auth.onLocked(() => {
       setMode('locked')
       setConnections([])
+      setShowSettings(false)
     })
     return unlisten
   }, [setMode, setConnections])
 
-  // ── Load connections (only when authenticated) ─────────────────────────────
+  // ── Load connections once authenticated ───────────────────────────────────
   const { data: connections } = useQuery({
     queryKey: ['connections'],
     queryFn: () => api.connections.list(),
@@ -64,8 +67,7 @@ export default function App() {
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isResizing.current) return
-    const w = Math.max(64, Math.min(600, e.clientX))
-    setSidebarWidth(w)
+    setSidebarWidth(Math.max(64, Math.min(600, e.clientX)))
   }, [])
 
   useEffect(() => {
@@ -85,52 +87,59 @@ export default function App() {
       </Center>
     )
   }
-
-  if (mode === 'setup') return <LoginPage mode="setup" />
-  if (mode === 'login') return <LoginPage mode="login" />
+  if (mode === 'setup')  return <LoginPage mode="setup" />
+  if (mode === 'login')  return <LoginPage mode="login" />
   if (mode === 'locked') return <LoginPage mode="locked" />
 
-  // ── Authenticated app shell ─────────────────────────────────────────────────
+  // ── Authenticated shell ────────────────────────────────────────────────────
   return (
     <AppShell navbar={{ width: sidebarWidth, breakpoint: 'sm' }} padding={0}>
       <AppShell.Navbar>
-        <Box style={{ position: 'relative', height: '100%', overflow: 'hidden' }}>
+        <Box style={{ position: 'relative', height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+
           {sidebarWidth <= 64 ? (
-            <Stack
-              align="center"
-              pt="md"
-              gap="lg"
-              h="100%"
-              style={{ borderRight: '1px solid var(--mantine-color-dark-4)' }}
-            >
+            <Stack align="center" pt="md" gap="lg" flex={1}
+              style={{ borderRight: '1px solid var(--mantine-color-dark-4)' }}>
               <Tooltip label="Expand Sidebar" position="right">
-                <ActionIcon
-                  onClick={() => setSidebarWidth(260)}
-                  variant="subtle"
-                  size="lg"
-                  color="gray"
-                >
+                <ActionIcon onClick={() => setSidebarWidth(260)} variant="subtle" size="lg" color="gray">
                   <IconMenu2 size={24} />
                 </ActionIcon>
               </Tooltip>
             </Stack>
           ) : (
-            <ConnectionSidebar />
+            <Box flex={1} style={{ overflow: 'hidden' }}>
+              <ConnectionSidebar />
+            </Box>
+          )}
+
+          {/* Settings button pinned to bottom */}
+          {sidebarWidth > 64 && (
+            <Box
+              px="sm"
+              py="xs"
+              style={{ borderTop: '1px solid var(--mantine-color-dark-4)' }}
+            >
+              <Tooltip label="Settings" position="right">
+                <ActionIcon
+                  variant={showSettings ? 'light' : 'subtle'}
+                  color={showSettings ? 'indigo' : 'gray'}
+                  size="md"
+                  onClick={() => setShowSettings(s => !s)}
+                  w="100%"
+                >
+                  <IconSettings size={16} />
+                </ActionIcon>
+              </Tooltip>
+            </Box>
           )}
 
           {/* Drag handle */}
           <Box
             onMouseDown={handleMouseDown}
             style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              width: 6,
-              height: '100%',
-              cursor: 'col-resize',
-              zIndex: 100,
-              backgroundColor: 'transparent',
-              transition: 'background-color 0.15s',
+              position: 'absolute', top: 0, right: 0,
+              width: 6, height: '100%', cursor: 'col-resize', zIndex: 100,
+              backgroundColor: 'transparent', transition: 'background-color 0.15s',
             }}
             onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--mantine-color-indigo-6)')}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
@@ -138,8 +147,13 @@ export default function App() {
         </Box>
       </AppShell.Navbar>
 
-      <AppShell.Main>
-        {activeConnectionId ? <DashboardPage key={activeConnectionId} /> : <WelcomePage />}
+      <AppShell.Main style={{ overflow: 'auto' }}>
+        {showSettings
+          ? <SettingsPage />
+          : activeConnectionId
+            ? <DashboardPage key={activeConnectionId} />
+            : <WelcomePage />
+        }
       </AppShell.Main>
     </AppShell>
   )
