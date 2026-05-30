@@ -1,0 +1,9 @@
+node_modules/
+out/
+dist-package/
+*.vault
+*.dbwarden
+auth.json
+audit.jsonl
+.env
+.env.*
