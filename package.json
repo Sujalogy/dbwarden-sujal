@@ -7,7 +7,12 @@
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
-    "package": "electron-vite build && electron-builder"
+    "package": "electron-vite build && electron-builder",
+    "release": "electron-vite build && electron-builder --publish always"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sujalogy/dbwarden-sujal.git"
   },
   "build": {
     "appId": "com.dbwarden.app",
@@ -35,7 +40,7 @@
     }
   },
   "keywords": [],
-  "author": "",
+  "author": "Sujalogy",
   "license": "ISC",
   "dependencies": {
     "@mantine/core": "^9.2.2",
