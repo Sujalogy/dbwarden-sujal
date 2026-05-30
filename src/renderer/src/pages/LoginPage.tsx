@@ -6,28 +6,16 @@ import {
   IconAlertCircle, IconShield, IconDownload, IconUpload
 } from '@tabler/icons-react'
 import { useDisclosure } from '@mantine/hooks'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { api } from '../api'
 import { useAuthStore } from '../store/auth'
+import { getPasswordStrength } from '../utils/password'
+import Logo from '../components/Logo'
 import type { LoginResult } from '../../../shared/types'
 
 type Mode = 'setup' | 'login' | 'locked'
 
 interface Props { mode: Mode }
-
-// ── Password strength ──────────────────────────────────────────────────────────
-
-function pwStrength(pw: string): { score: number; label: string; color: string } {
-  let s = 0
-  if (pw.length >= 8) s++
-  if (pw.length >= 14) s++
-  if (/[A-Z]/.test(pw)) s++
-  if (/[0-9]/.test(pw)) s++
-  if (/[^A-Za-z0-9]/.test(pw)) s++
-  const labels = ['Very weak', 'Weak', 'Fair', 'Good', 'Strong']
-  const colors = ['red', 'orange', 'yellow', 'teal', 'green']
-  return { score: s, label: labels[s] ?? 'Strong', color: colors[s] ?? 'green' }
-}
 
 // ── Vault export/import modal ─────────────────────────────────────────────────
 
@@ -169,7 +157,7 @@ export default function LoginPage({ mode }: Props) {
     return () => clearInterval(t)
   }, [lockoutMs > 0])
 
-  const strength = pwStrength(password)
+  const strength = getPasswordStrength(password)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -229,13 +217,7 @@ export default function LoginPage({ mode }: Props) {
       <Stack align="center" gap="xl" w={420} px="md">
         {/* Logo */}
         <Stack align="center" gap="xs">
-          <img
-            src="/logo.svg"
-            alt="DB Warden"
-            width={80}
-            height={80}
-            style={{ filter: mode === 'locked' ? 'grayscale(40%) brightness(0.8)' : 'none' }}
-          />
+          <Logo size={80} dimmed={mode === 'locked'} />
           <Title order={2} ta="center">{titles[mode]}</Title>
           <Text size="sm" c="dimmed" ta="center" maw={360}>{subtitles[mode]}</Text>
         </Stack>

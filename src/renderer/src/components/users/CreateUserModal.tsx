@@ -8,31 +8,13 @@ import { useQueryClient } from '@tanstack/react-query'
 import { notifications } from '@mantine/notifications'
 import { IconRefresh, IconCheck } from '@tabler/icons-react'
 import { api } from '../../api'
+import { generatePassword, getPasswordStrength } from '../../utils/password'
 
 interface Props {
   opened: boolean
   onClose: () => void
   connectionId: string
   existingRoles: string[]
-}
-
-function generatePassword(len = 20): string {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
-  return Array.from(crypto.getRandomValues(new Uint8Array(len)))
-    .map(b => chars[b % chars.length])
-    .join('')
-}
-
-function passwordStrength(pw: string): { score: number; label: string; color: string } {
-  let score = 0
-  if (pw.length >= 8) score++
-  if (pw.length >= 14) score++
-  if (/[A-Z]/.test(pw)) score++
-  if (/[0-9]/.test(pw)) score++
-  if (/[^A-Za-z0-9]/.test(pw)) score++
-  const labels = ['Very weak', 'Weak', 'Fair', 'Good', 'Strong']
-  const colors = ['red', 'orange', 'yellow', 'teal', 'green']
-  return { score, label: labels[score] ?? 'Strong', color: colors[score] ?? 'green' }
 }
 
 export default function CreateUserModal({ opened, onClose, connectionId, existingRoles }: Props) {
@@ -58,7 +40,7 @@ export default function CreateUserModal({ opened, onClose, connectionId, existin
   })
 
   const pw = form.values.password
-  const strength = passwordStrength(pw)
+  const strength = getPasswordStrength(pw)
 
   const handleGenerate = useCallback(() => {
     form.setFieldValue('password', generatePassword())
